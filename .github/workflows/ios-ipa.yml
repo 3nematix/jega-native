@@ -1,0 +1,58 @@
+name: Build unsigned iOS IPA
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  ipa:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Expo prebuild (iOS native project)
+        run: npx expo prebuild -p ios
+        env:
+          CI: '1'
+
+      - name: Build unsigned archive
+        working-directory: ios
+        run: |
+          set -eo pipefail
+          WS=$(ls -d *.xcworkspace | head -1)
+          SCHEME=$(basename "$WS" .xcworkspace)
+          echo "Workspace=$WS  Scheme=$SCHEME"
+          xcodebuild \
+            -workspace "$WS" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$PWD/build/App.xcarchive" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            archive
+
+      - name: Package into .ipa (unsigned)
+        working-directory: ios
+        run: |
+          set -e
+          mkdir -p build/Payload
+          cp -R build/App.xcarchive/Products/Applications/*.app build/Payload/
+          (cd build && zip -qry Jega.ipa Payload)
+          ls -la build/Jega.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Jega-ipa
+          path: ios/build/Jega.ipa
+          if-no-files-found: error
