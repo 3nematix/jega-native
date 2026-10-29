@@ -8,6 +8,7 @@ import { useStore } from '../store';
 import { Icon, font } from '../ui';
 import { BY_ID } from '../data/exercises';
 import { exerciseProgress, fmtVol, agoLabel } from '../helpers';
+import Chart from '../components/Chart';
 
 export default function ExerciseScreen() {
   const theme = useTheme();
@@ -71,6 +72,10 @@ export default function ExerciseScreen() {
                   <PStat n={fmtVol(best!)} l="Geriausias kg" theme={theme} />
                   <PStat n={fmtVol(prog[prog.length - 1].topKg)} l="Paskutinis kg" theme={theme} />
                   <PStat n={String(prog.length)} l="Kartų" theme={theme} />
+                </View>
+                <Text style={{ color: theme.muted, fontFamily: font(700), fontSize: 11, textTransform: 'uppercase', marginTop: 18, marginBottom: 8 }}>Svoris laike</Text>
+                <View style={{ backgroundColor: theme.surface, borderColor: theme.line, borderWidth: 1, borderRadius: 14, padding: 12, alignItems: 'center' }}>
+                  <Chart data={prog} theme={theme} width={290} />
                 </View>
                 <View style={{ backgroundColor: theme.surface, borderColor: theme.line, borderWidth: 1, borderRadius: 14, paddingHorizontal: 14, marginTop: 16 }}>
                   {prog.slice().reverse().slice(0, 10).map((d, i) => (

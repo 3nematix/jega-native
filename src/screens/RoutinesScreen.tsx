@@ -36,6 +36,7 @@ export default function RoutinesScreen() {
   const routineMenu = (r: Routine) =>
     Alert.alert(r.name, undefined, [
       { text: 'Pradėti', onPress: () => { startSession(r.id); nav.navigate('Session'); } },
+      { text: 'Redaguoti', onPress: () => nav.navigate('Editor', { id: r.id }) },
       { text: 'Pervadinti', onPress: () => prompt('Pervadinti', (v) => renameRoutine(r.id, v), r.name) },
       { text: 'Dubliuoti', onPress: () => duplicateRoutine(r.id) },
       { text: 'Trinti', style: 'destructive', onPress: () => deleteRoutine(r.id) },
@@ -58,7 +59,7 @@ export default function RoutinesScreen() {
       {r.exercises.length > 0 ? (
         <Btn label="Pradėti" icon="play" onPress={() => { startSession(r.id); nav.navigate('Session'); }} theme={theme} style={{ marginTop: 14, borderRadius: 12 }} />
       ) : (
-        <Btn label="Redaguoti" icon="edit" kind="surface" onPress={() => nav.navigate('Routine', { id: r.id })} theme={theme} style={{ marginTop: 14, borderRadius: 12 }} />
+        <Btn label="Redaguoti" icon="edit" kind="surface" onPress={() => nav.navigate('Editor', { id: r.id })} theme={theme} style={{ marginTop: 14, borderRadius: 12 }} />
       )}
     </View>
   );

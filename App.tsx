@@ -17,9 +17,12 @@ import ProfileScreen from './src/screens/ProfileScreen';
 import RoutineScreen from './src/screens/RoutineScreen';
 import SessionScreen from './src/screens/SessionScreen';
 import ExerciseScreen from './src/screens/ExerciseScreen';
+import EditorScreen from './src/screens/EditorScreen';
+import LibraryScreen from './src/screens/LibraryScreen';
 
 export type RootStackParamList = {
-  Auth: undefined; Tabs: undefined; Routine: { id: string }; Session: undefined; Exercise: { exId: string };
+  Auth: undefined; Tabs: undefined; Routine: { id: string }; Session: undefined;
+  Exercise: { exId: string }; Editor: { id: string }; Library: { picker?: boolean };
 };
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -79,6 +82,8 @@ export default function App() {
               <Stack.Screen name="Routine" component={RoutineScreen} />
               <Stack.Screen name="Session" component={SessionScreen} options={{ gestureEnabled: false }} />
               <Stack.Screen name="Exercise" component={ExerciseScreen} />
+              <Stack.Screen name="Editor" component={EditorScreen} />
+              <Stack.Screen name="Library" component={LibraryScreen} />
             </>
           )}
         </Stack.Navigator>

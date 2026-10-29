@@ -50,6 +50,7 @@ export default function ProfileScreen() {
 
         <Text style={{ color: theme.muted, fontFamily: font(700), fontSize: 12, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10 }}>Daugiau</Text>
         <Row icon="hist" label="Istorija" onPress={() => nav.navigate('History')} theme={theme} />
+        <Row icon="dumbbell" label="Pratimų biblioteka" onPress={() => nav.navigate('Library', {})} theme={theme} />
 
         <Text style={{ color: theme.muted, fontFamily: font(700), fontSize: 12, letterSpacing: 1.2, textTransform: 'uppercase', marginTop: 18, marginBottom: 10 }}>Nustatymai</Text>
         <Row icon="signout" label="Atsijungti" danger onPress={confirmSignOut} theme={theme} />

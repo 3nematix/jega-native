@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, ScrollView, Image, Alert } from 'react-native';
+import { View, Text, Pressable, ScrollView, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTheme } from '../theme';
@@ -8,6 +8,7 @@ import { useStore } from '../store';
 import { Icon, Btn, font } from '../ui';
 import { BY_ID } from '../data/exercises';
 import { scheme, volume, totalSets, estDuration, fmtVol } from '../helpers';
+import BodyMap from '../components/BodyMap';
 
 export default function RoutineScreen() {
   const theme = useTheme();
@@ -54,6 +55,7 @@ export default function RoutineScreen() {
             <Stat n={String(totalSets(routine))} l="Serijos" theme={theme} />
             <Stat n={estDuration(routine)} l="Laikas" theme={theme} />
           </View>
+          {muscles.length > 0 && <View style={{ marginTop: 14 }}><BodyMap vol={vol} theme={theme} /></View>}
           <View style={{ marginTop: 14, gap: 9 }}>
             {muscles.map((m) => (
               <View key={m} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -70,7 +72,7 @@ export default function RoutineScreen() {
 
       <View style={{ flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 10, paddingBottom: 14, borderTopWidth: 1, borderTopColor: theme.line }}>
         <Btn label="Pradėti treniruotę" icon="play" onPress={() => { startSession(routine.id); nav.navigate('Session'); }} theme={theme} style={{ flex: 1 }} />
-        <Btn icon="edit" kind="surface" onPress={() => Alert.alert('', 'Redaktorius bus kitame etape')} theme={theme} style={{ width: 54 }} />
+        <Btn icon="edit" kind="surface" onPress={() => nav.navigate('Editor', { id: routine.id })} theme={theme} style={{ width: 54 }} />
       </View>
     </SafeAreaView>
   );

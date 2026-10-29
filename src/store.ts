@@ -46,6 +46,20 @@ type State = {
   setTopKg: (i: number, kg: string) => void;
   finishSession: () => void;
   discardSession: () => void;
+
+  editorDraft: { id: string; name: string; exercises: RoutineEx[] } | null;
+  startEdit: (routineId: string) => void;
+  clearDraft: () => void;
+  draftName: (name: string) => void;
+  draftAddExercise: (exId: string) => void;
+  draftRemoveExercise: (i: number) => void;
+  draftMove: (i: number, dir: number) => void;
+  draftAddSet: (i: number) => void;
+  draftRemoveSet: (i: number, si: number) => void;
+  draftSetField: (i: number, si: number, field: 'kg' | 'reps', v: string) => void;
+  draftNote: (i: number, v: string) => void;
+  draftRest: (i: number, v: number) => void;
+  saveDraft: () => void;
 };
 
 let pushTimer: ReturnType<typeof setTimeout> | null = null;
@@ -299,5 +313,62 @@ export const useStore = create<State>((set, get) => {
       commit(db);
     },
     discardSession: () => commitSession(null),
+
+    editorDraft: null,
+    startEdit: (routineId) => {
+      const r = get().db.routines.find((x) => x.id === routineId);
+      if (r) set({ editorDraft: JSON.parse(JSON.stringify(r)) });
+    },
+    clearDraft: () => set({ editorDraft: null }),
+    draftName: (name) => { const d = get().editorDraft; if (d) set({ editorDraft: { ...d, name } }); },
+    draftAddExercise: (exId) => {
+      const d = get().editorDraft; if (!d) return;
+      const ex: RoutineEx = { exId, note: '', rest: 90, sets: [{ reps: '', kg: '' }, { reps: '', kg: '' }, { reps: '', kg: '' }] };
+      set({ editorDraft: { ...d, exercises: [...d.exercises, ex] } });
+    },
+    draftRemoveExercise: (i) => {
+      const d = get().editorDraft; if (!d) return;
+      set({ editorDraft: { ...d, exercises: d.exercises.filter((_, idx) => idx !== i) } });
+    },
+    draftMove: (i, dir) => {
+      const d = get().editorDraft; if (!d) return;
+      const j = i + dir; if (j < 0 || j >= d.exercises.length) return;
+      const ex = [...d.exercises]; const t = ex[i]; ex[i] = ex[j]; ex[j] = t;
+      set({ editorDraft: { ...d, exercises: ex } });
+    },
+    draftAddSet: (i) => {
+      const d = get().editorDraft; if (!d) return;
+      const ex = d.exercises.map((x, idx) => {
+        if (idx !== i) return x;
+        const last = x.sets[x.sets.length - 1] || { reps: '', kg: '' };
+        return { ...x, sets: [...x.sets, { reps: last.reps, kg: '' }] };
+      });
+      set({ editorDraft: { ...d, exercises: ex } });
+    },
+    draftRemoveSet: (i, si) => {
+      const d = get().editorDraft; if (!d) return;
+      const ex = d.exercises.map((x, idx) => (idx === i ? { ...x, sets: x.sets.filter((_, k) => k !== si) } : x));
+      set({ editorDraft: { ...d, exercises: ex } });
+    },
+    draftSetField: (i, si, field, v) => {
+      const d = get().editorDraft; if (!d) return;
+      const ex = d.exercises.map((x, idx) =>
+        idx === i ? { ...x, sets: x.sets.map((s, k) => (k === si ? { ...s, [field]: v } : s)) } : x
+      );
+      set({ editorDraft: { ...d, exercises: ex } });
+    },
+    draftNote: (i, v) => {
+      const d = get().editorDraft; if (!d) return;
+      set({ editorDraft: { ...d, exercises: d.exercises.map((x, idx) => (idx === i ? { ...x, note: v } : x)) } });
+    },
+    draftRest: (i, v) => {
+      const d = get().editorDraft; if (!d) return;
+      set({ editorDraft: { ...d, exercises: d.exercises.map((x, idx) => (idx === i ? { ...x, rest: v } : x)) } });
+    },
+    saveDraft: () => {
+      const d = get().editorDraft; if (!d) return;
+      get().saveRoutine(d.id, d.name || 'Untitled', d.exercises);
+      set({ editorDraft: null });
+    },
   };
 });

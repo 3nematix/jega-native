@@ -10,7 +10,7 @@ const FEATHER: Record<string, any> = {
   play: 'play', plus: 'plus', more: 'more-vertical', back: 'chevron-left', chev: 'chevron-right',
   user: 'user', chart: 'bar-chart-2', check: 'check', trash: 'trash-2', edit: 'edit-2',
   folder: 'folder', clock: 'clock', download: 'download', signout: 'log-out', x: 'x',
-  flag: 'flag', hist: 'clock', search: 'search', moon: 'moon', chevdown: 'chevron-down',
+  flag: 'flag', hist: 'clock', search: 'search', moon: 'moon', chevdown: 'chevron-down', chevup: 'chevron-up',
 };
 
 export function Icon({ name, size = 22, color }: { name: string; size?: number; color: string }) {
