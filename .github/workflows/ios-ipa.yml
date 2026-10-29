@@ -15,6 +15,15 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Select newest Xcode (needs Swift 6.2 for SDK 58)
+        run: |
+          echo "Installed Xcodes:"; ls -d /Applications/Xcode*.app 2>/dev/null
+          LATEST=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
+          echo "Selecting: $LATEST"
+          sudo xcode-select -s "$LATEST/Contents/Developer"
+          xcodebuild -version
+          swift --version
+
       - name: Install deps
         run: npm ci
 
